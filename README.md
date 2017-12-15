@@ -375,3 +375,236 @@ class App extends Component {
 
 export default App;
 ```
+
+## Reduxの実装
+- `constants.js`を作成
+```js
+export const SIGNED_IN = 'SIGNED_IN';
+
+```
+
+```js
+//index.jsにインポート
+import { createStore} from 'redux';
+import { Provider } from 'react-redux';
+
+//宣言しておく必要がある
+const store = createStore();
+
+//Providerでラップ
+ReactDOM.render(
+  <Provider store={store}>
+    <Router path="/" history={browserHistory}>
+      <Route path="/app" component={App} />
+      <Route path="/signin" component={SignIn} />
+      <Route path="/signup" component={SignUp} />
+    </Router>
+  </Provider>
+  , document.getElementById('root')
+)
+
+```
+
+- reducers/index.jsを作成
+```js
+import { SIGNED_IN } from '../constants';
+
+
+let user = {
+  email: ull
+}
+
+
+export default ( state = user, action) => {
+  switch (action.type) {
+    case SIGNED_IN:
+      const{ email } = action;
+      user = {
+        email
+      }
+      return user;
+    default:
+        return state;
+  }
+}
+
+```
+
+- actions/index.jsを作成
+```js
+import { SIGNED_IN } from '../constants';
+
+export function logUser(email) {
+  const action = {
+    type: SIGNED_IN,
+    email
+  }
+}
+
+```
+
+```js
+// index.js を編集
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { createStore} from 'redux';
+import { Provider } from 'react-redux';
+
+import { Router, Route, browserHistory } from 'react-router';
+import { firebaseApp } from './firebase';
+//action をインポート
+import { logUser } from './actions';
+//reducerをインポート
+import reducer from './reducers';
+
+import App from './components/App';
+import SignIn from './components/SignIn';
+import SignUp from './components/SignUp';
+
+//reducerを引数に入れる
+const store = createStore(reducer);
+
+firebaseApp.auth().onAuthStateChanged(user => {
+  if(user){
+    const { email } = user;
+    store.dispatch(logUser(email));
+    browserHistory.push('/app');
+  } else {
+    console.log('user has signed out or still needs to sign in.');
+    browserHistory.replace('/signin');
+  }
+})
+
+ReactDOM.render(
+  <Provider store={store}>
+    <Router path="/" history={browserHistory}>
+      <Route path="/app" component={App} />
+      <Route path="/signin" component={SignIn} />
+      <Route path="/signup" component={SignUp} />
+    </Router>
+  </Provider>
+  , document.getElementById('root')
+)
+
+```
+
+```js
+//actions/index.js
+
+import { SIGNED_IN } from '../constants';
+
+export function logUser(email) {
+  const action = {
+    type: SIGNED_IN,
+    email
+  }
+  return action;
+}
+
+```
+
+- app.jxsを修正
+```js
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { firebaseApp } from '../firebase';
+
+
+class App extends Component {
+  signOut(){
+    firebaseApp.auth().signOut();
+  }
+
+  render() {
+    return (
+      <div>App
+
+      <button
+        className="btn btn-danger"
+        onClick={() => this.signOut()}
+        >
+        signOut
+      </button>
+      </div>
+    )
+  }
+}
+
+function mapStateToProps(state) {
+  console.log('state', state);
+  return {
+
+  }
+}
+
+export default connect(mapStateToProps,null)(App);
+
+```
+
+## App.jsxを作り込む
+- AddGoal
+```js
+import React, { Component } from 'react';
+
+class AddGoal extends Component {
+  constructor(props){
+    super(props);
+    this.state = {
+      title: ''
+    }
+  }
+
+  addGoal(){
+    console.log('this.state', this.state);
+  }
+
+  render() {
+    return(
+      <div className="form-inline">
+        <div className="form-group">
+          <input type="text"
+            placeholder="Add a goal"
+            className="form-control"
+            style={{marginRigh: '5px'}}
+            onChange={ event => this.setState({title: event.target.value})}
+            />
+          <button className="btn btn-success" type="btn" onClick={() => this.addGoal()}>Submit</button>
+        </div>
+      </div>
+    )
+  }
+}
+
+export default AddGoal;
+
+```
+
+- App.jsxにインポート
+```js
+import AddGoal from './AddGoal';
+
+//省略
+return (
+  <div>
+    <h3>Goals</h3>
+    //作成したコンッポーネントに置き換え
+    <AddGoal />
+    <div>Goal List</div>
+
+  <button
+    className="btn btn-danger"
+    onClick={() => this.signOut()}
+    >
+    signOut
+  </button>
+  </div>
+)
+
+
+```
+
+-
+```js
+
+
+```
