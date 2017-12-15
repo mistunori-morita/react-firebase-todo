@@ -698,3 +698,55 @@ function mapStateToProps(state) {
 export default connect(mapStateToProps, null)(AddGoal);
 
 ```
+
+## GoalListコンポーネント作成
+- src/components/GoalList.jsxを作成
+```js
+import React, { Component } from 'react';
+import { goalRef } from '../firebase';
+
+
+class GoalList extends Component {
+  componentDidMount(){
+    goalRef.on('value', snap => {
+      let goals = [];
+      snap.forEach(goal => {
+        // let goalObject = goal.val();
+        const { email, title } = goal.val();
+        goals.push({email, title});
+      })
+      console.log('goals', goals);
+    })
+  }
+
+  render(){
+    return(
+      <div>Goall List</div>
+    )
+  }
+}
+
+export default GoalList;
+
+```
+
+- App.jsxに作成したGoalListをインポート
+```js
+import GoalList from './GoalList';
+
+
+//省略
+return (
+  <div>
+    <h3>Goals</h3>
+    <AddGoal />
+    <GoalList />
+
+  <button
+    className="btn btn-danger"
+    onClick={() => this.signOut()}
+    >
+    signOut
+  </button>
+  </div>
+```
