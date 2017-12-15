@@ -6,7 +6,10 @@ class SignUp extends Component {
     super(props);
     this.state = {
       email: '',
-      password: ''
+      password: '',
+      error: {
+        message: ''
+      }
     }
   }
 
@@ -15,23 +18,25 @@ class SignUp extends Component {
     const { email, password } = this.state;
     firebaseApp.auth().createUserWithEmailAndPassword(email, password)
       .catch(error => {
-        console.log('error', error);
+        this.setState({error})
       })
   }
 
   render() {
     return (
-      <div className="form-inline">
+      <div className="form-inline" style={{margin: '5%'}}>
         <h2>SignUp</h2>
         <div className="form-group">
           <input type="text"
             className="form-control"
             placeholder="email"
+            style={{marginRight: '5px'}}
             onChange={event => this.setState({email: event.target.value})}/>
 
           <input type="password"
             className="form-control"
             placeholder="password"
+            style={{marginRight: '5px'}}
             onChange={event => this.setState({password: event.target.value})}/>
           <button className="btn btn-primary"
             type="button"
@@ -39,6 +44,7 @@ class SignUp extends Component {
             Sign Up
           </button>
         </div>
+        <div>{this.state.error.message}</div>
       </div>
     )
   }

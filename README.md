@@ -173,7 +173,11 @@ class SignUp extends Component {
     super(props);
     this.state = {
       email: '',
-      password: ''
+      password: '',
+      //8 エラー文章の表示設定
+      error: {
+        message: ''
+      }
     }
   }
 
@@ -185,6 +189,8 @@ class SignUp extends Component {
     firebaseApp.auth().createUserWithEmailAndPassword(email, password)
       .catch(error => {
         console.log('error', error);
+        //7 errorメッセージの追加
+          this.setState({error})
       })
   }
 
@@ -197,12 +203,16 @@ class SignUp extends Component {
           <input type="text"
             className="form-control"
             placeholder="email"
+            //10 フォームのスタイルをインライン形式で設定
+            style={{marginRight: '5px'}}
             // 2 onChangeイベントの設定 setStateで入力された値をthis.stateに代入
             onChange={event => this.setState({email: event.target.value})}/>
 
           <input type="password"
             className="form-control"
             placeholder="password"
+            //10 フォームのスタイルをインライン形式で設定
+            style={{marginRight: '5px'}}
             onChange={event => this.setState({password: event.target.value})}/>
           <button className="btn btn-primary"
             type="button"
@@ -211,6 +221,8 @@ class SignUp extends Component {
             Sign Up
           </button>
         </div>
+        //9　エラー表示
+        <div>{this.state.error.message}</div>
       </div>
     )
   }
@@ -221,6 +233,17 @@ export default SignUp;
 
 ```
 - firebaseの設定でAuthenticationのメールログインを有効にする
- ![firebase　プロジェクト作成](react-firebase-auth/images/5.png "5")
- ![firebase　プロジェクト作成](react-firebase-auth/images/6.png "6")
- ![firebase　プロジェクト作成](react-firebase-auth/images/7.png "7")
+
+![firebase　プロジェクト作成](react-firebase-auth/images/5.png "5")
+![firebase　プロジェクト作成](react-firebase-auth/images/6.png "6")
+![firebase　プロジェクト作成](react-firebase-auth/images/7.png "7")
+
+- このセッティングをしないとfirebaseに情報が入ってこないので注意
+- 設定ができるとフォームから入力された値がAuthenticationユーザーの中に登録されている
+
+```js
+//SignIn.jsx
+
+
+
+```
