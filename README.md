@@ -158,3 +158,69 @@ ReactDOM.render(
   , document.getElementById('root')
 )
 ```
+
+## SignUp/SignInコンポーネントの作成
+- 各コンポーネントを作成していく
+```js
+//SignUp.jsx
+
+import React, { Component } from 'react';
+import { firebaseApp } from '../firebase';
+
+class SignUp extends Component {
+  //3 constructor　初期化してstateを準備
+  constructor(props){
+    super(props);
+    this.state = {
+      email: '',
+      password: ''
+    }
+  }
+
+  //5 signUp関数を設定、最初はコンソールで値が取れているかチェック
+  signUp() {
+    console.log('this.state', this.state);
+    const { email, password } = this.state;
+    //6 firebaseとのつなぎこみ
+    firebaseApp.auth().createUserWithEmailAndPassword(email, password)
+      .catch(error => {
+        console.log('error', error);
+      })
+  }
+
+  render() {
+    return (
+      //1.jsxでコーディングする
+      <div className="form-inline">
+        <h2>SignUp</h2>
+        <div className="form-group">
+          <input type="text"
+            className="form-control"
+            placeholder="email"
+            // 2 onChangeイベントの設定 setStateで入力された値をthis.stateに代入
+            onChange={event => this.setState({email: event.target.value})}/>
+
+          <input type="password"
+            className="form-control"
+            placeholder="password"
+            onChange={event => this.setState({password: event.target.value})}/>
+          <button className="btn btn-primary"
+            type="button"
+            //4 onClickでsignUpの関数を走らせる
+            onClick={() => this.signUp()}>
+            Sign Up
+          </button>
+        </div>
+      </div>
+    )
+  }
+}
+
+
+export default SignUp;
+
+```
+- firebaseの設定でAuthenticationのメールログインを有効にする
+ ![firebase　プロジェクト作成](react-firebase-auth/images/5.png "5")
+ ![firebase　プロジェクト作成](react-firebase-auth/images/6.png "6")
+ ![firebase　プロジェクト作成](react-firebase-auth/images/7.png "7")
