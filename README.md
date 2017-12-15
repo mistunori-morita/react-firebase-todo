@@ -309,5 +309,69 @@ class SignIn extends Component {
 
 export default SignIn;
 
+```
 
+## browserHistoryを設置
+```js
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { Router, Route, browserHistory } from 'react-router';
+import { firebaseApp } from './firebase';
+
+import App from './components/App';
+import SignIn from './components/SignIn';
+import SignUp from './components/SignUp';
+
+firebaseApp.auth().onAuthStateChanged(user => {
+  if(user){
+    console.log('onn', user);
+    browserHistory.push('/app'); //追加することで　サインイン　したらappに飛ぶ
+  } else {
+    console.log('user has signed out or still needs to sign in.');
+    browserHistory.replace('/signin');　//そうじゃなかったらsigninに飛ぶ
+  }
+})
+
+ReactDOM.render(
+  <Router path="/" history={browserHistory}>
+    <Route path="/app" component={App} />
+    <Route path="/signin" component={SignIn} />
+    <Route path="/signup" component={SignUp} />
+  </Router>
+  , document.getElementById('root')
+)
+
+```
+- browserHistoryを設定したのでAppを作り込む
+```js
+import React, { Component } from 'react';
+//4　Signoutを走らせるためにfirebaseAppをインポートする
+import { firebaseApp } from '../firebase';
+
+
+class App extends Component {
+  //3 signOut()関数を設定
+  signOut(){
+    firebaseApp.auth().signOut();
+  }
+
+  render() {
+    return (
+      //1ボタンとクリックイベントを設定
+      <div>
+      App
+      <button
+        className="btn btn-danger"
+        //2 イベント設定
+        onClick={() => this.signOut()}
+        >
+        signOut
+      </button>
+      </div>
+    )
+  }
+}
+
+
+export default App;
 ```
