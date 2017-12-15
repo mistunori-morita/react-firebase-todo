@@ -102,16 +102,21 @@ ReactDOM.render(
 
 ## firebaseセッティング
 - firebaseのサイトに行ってプロジェクトの作成
+
 - 1各項目を入力していく
+
 ![firebase　プロジェクト作成](react-firebase-auth/images/1.png "1")
 
 - 2各項目を入力していく
+
 ![firebase　プロジェクト作成](react-firebase-auth/images/2.png "2")
 
 - 3　この場所をクリック
+
 ![firebase　プロジェクト作成](react-firebase-auth/images/3.png "3")
 
 - 4　必要な情報をコピー
+
 ![firebase　プロジェクト作成](react-firebase-auth/images/4.png "4")
 
 - src/firebase.jsを作成し先画像の箇所のコードをコピーして貼り付ける
