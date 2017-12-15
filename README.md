@@ -103,4 +103,4 @@ ReactDOM.render(
 ## firebaseセッティング
 - firebaseのサイトに行ってプロジェクトの作成
 - 各項目を入力していく
-  ![firebase　プロジェクト作成](/images/1.jpg)
+  ![firebase　プロジェクト作成](./images/1.png "1")
