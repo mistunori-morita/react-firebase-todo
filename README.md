@@ -750,3 +750,110 @@ return (
   </button>
   </div>
 ```
+
+## reducer追記
+- constants.js
+```js
+export const SET_GOALS = 'SET_GOALS';
+```
+
+- actions/index.js
+```js
+import { SIGNED_IN, SET_GOALS } from '../constants';
+
+export function logUser(email) {
+  const action = {
+    type: SIGNED_IN,
+    email
+  }
+  return action;
+}
+
+//追記
+export function setGoals(goals){
+  const action = {
+    type: SET_GOALS,
+    goals
+  }
+  return action;
+}
+
+```
+
+- reducersを分割
+- reducer_user
+- reuder_goals.js
+
+```
+//reducer_golas.
+import { SET_GOALS } from '../constants';
+
+export default (state = [], action) => {
+  switch (action.type) {
+    case SET_GOALS:
+      const { goals } = action;
+      return goals;
+    default:
+      return state;
+  }
+}
+
+
+```
+
+- reducers/index.jsを作成して二つをまとめる
+```js
+//reducer/index.js
+import { combineReducers } from 'redux';
+import user from './reducer_user';
+import goals from './reducer_goals';
+
+
+export default combineReducers({
+  user,
+  goals
+})
+
+```
+
+- GoalListの編集
+```js
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { goalRef } from '../firebase';
+import { setGoals } from '../actions';
+
+class GoalList extends Component {
+  componentDidMount(){
+    goalRef.on('value', snap => {
+      let goals = [];
+      snap.forEach(goal => {
+        const { email, title } = goal.val();
+        goals.push({email, title});
+      })
+      console.log('goals', goals);
+      this.props.setGoals(goals);
+    })
+  }
+
+  render(){
+    console.log('this.props.goals', this.props.goals);
+    return(
+      <div>
+
+      </div>
+    )
+  }
+}
+
+function mapStateToProps(state) {
+  const { goals } = state;
+  return {
+    goals
+  }
+}
+
+export default connect(mapStateToProps, { setGoals })(GoalList);
+
+//この段階でコンソールにdbに登録されているリスト一覧が表示されている次でmap()を使って表示させる
+```
