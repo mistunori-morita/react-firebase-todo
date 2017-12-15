@@ -603,8 +603,98 @@ return (
 
 ```
 
--
-```js
+- firebase.jsに追加
+- `export const goalRef = firebase.database().ref('goals');`
 
+
+- AddGoal.jsxにインポート
+```js
+import React, { Component } from 'react';
+//1 インポート
+import { goalRef } from '../firebase';
+
+class AddGoal extends Component {
+  constructor(props){
+    super(props);
+    this.state = {
+      title: ''
+    }
+  }
+
+  addGoal(){
+    console.log('this.state', this.state);
+    //2 goalRefをプッシュsiteDBへ
+    goalRef.push({email: 'test@gmail.com', title: this.state.title});
+  }
+
+  render() {
+    return(
+      <div className="form-inline">
+        <div className="form-group">
+          <input type="text"
+            placeholder="Add a goal"
+            className="form-control"
+            style={{marginRigh: '5px'}}
+            onChange={ event => this.setState({title: event.target.value})}
+            />
+          <button className="btn btn-success" type="btn" onClick={() => this.addGoal()}>Submit</button>
+        </div>
+      </div>
+    )
+  }
+}
+
+export default AddGoal;
+
+//この段階でfirebase DBに格納される
+
+```
+
+- AddGoal.jsxを編集
+```js
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { goalRef } from '../firebase';
+
+class AddGoal extends Component {
+  constructor(props){
+    super(props);
+    this.state = {
+      title: ''
+    }
+  }
+
+  addGoal(){
+    console.log('this', this);
+    const { title } = this.state;
+    const { email } = this.props;
+    goalRef.push({email, title});
+  }
+
+  render() {
+    return(
+      <div className="form-inline">
+        <div className="form-group">
+          <input type="text"
+            placeholder="Add a goal"
+            className="form-control"
+            style={{marginRigh: '5px'}}
+            onChange={ event => this.setState({title: event.target.value})}
+            />
+          <button className="btn btn-success" type="btn" onClick={() => this.addGoal()}>Submit</button>
+        </div>
+      </div>
+    )
+  }
+}
+
+function mapStateToProps(state) {
+  const { email } =state;
+  return {
+    email
+  }
+}
+
+export default connect(mapStateToProps, null)(AddGoal);
 
 ```
