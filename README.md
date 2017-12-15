@@ -102,5 +102,8 @@ ReactDOM.render(
 
 ## firebaseセッティング
 - firebaseのサイトに行ってプロジェクトの作成
-- 各項目を入力していく
+- 1各項目を入力していく
   ![firebase　プロジェクト作成](react-firebase-auth/images/1.png "1")
+
+- 2各項目を入力していく
+  ![firebase　プロジェクト作成](react-firebase-auth/images/2.png "2")
