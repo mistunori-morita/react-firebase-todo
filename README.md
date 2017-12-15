@@ -126,7 +126,7 @@ const config = {
     storageBucket: "xxxxxxxxxxxxxxxx",
     messagingSenderId: "xxxxxxxxxxxxxxxx"
   };
-//コードは生キュリティーのため一旦xで置き換え本来はここにおく
+//コードはセキュリティーのため一旦xで置き換え本来はここにおく
 export const firebaseApp = firebase.initializeApp(config);
 
 ```
