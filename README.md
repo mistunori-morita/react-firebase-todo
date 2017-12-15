@@ -33,3 +33,68 @@ ReactDOM.render(
 
 //これでAppと表示されたらおk
 ```
+
+## coponentsフォルダを作成
+- src/components フォルダを作成
+- App.jsx
+- SignIn.jsx
+- SignUp.jsx
+```js
+import React, { Component } from 'react';
+
+
+class App extends Component {
+  render() {
+    return (
+      <div>App</div>
+    )
+  }
+}
+
+
+export default App;
+
+//これをコピーしてSignIn,SignUpに書き換える
+```
+- index.jsにインポートする
+```jsx
+//index.js
+
+import React from 'react';
+import ReactDOM from 'react-dom';
+import App from './components/App';
+import SignIn from './components/SignIn';
+import SignUp from './components/SignUp';
+
+
+ReactDOM.render(
+  <div>App</div>, document.getElementById('root')
+)
+
+```
+
+## React-Routerの導入
+- 注意！バージョンが変更されているのでnpmでそのまま入れると古い場合は対応しない
+- 今回の場合は`npm install react-router@3`で導入
+```js
+import React from 'react';
+import ReactDOM from 'react-dom';
+//import
+import { Router, Route, browserHistory } from 'react-router';
+
+import App from './components/App';
+import SignIn from './components/SignIn';
+import SignUp from './components/SignUp';
+
+
+ReactDOM.render(
+  //変更
+  <Router path="/" history={browserHistory}>
+    <Route path="/app" component={App} />
+    <Route path="/signin" component={SignIn} />
+    <Route path="/signup" component={SignUp} />
+  </Router>
+  , document.getElementById('root')
+)
+
+```
