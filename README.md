@@ -857,3 +857,109 @@ export default connect(mapStateToProps, { setGoals })(GoalList);
 
 //この段階でコンソールにdbに登録されているリスト一覧が表示されている次でmap()を使って表示させる
 ```
+
+## GoalList mapping
+
+```js
+return(
+  <div>
+    {
+      //mapで一覧を表示できるようにする
+      this.props.goals.map((goal,index) => {
+        return(
+          <div key={index}>{goal.title}</div>
+        )
+      })
+    }
+  </div>
+```
+
+- GoalItem.jsxを作成
+```jsx
+import React, { Component } from 'react';
+
+
+class CoalItem extends Component {
+  render () {
+    return(
+      <div>Goal Item</div>
+    )
+  }
+}
+
+export default GoalItem;
+
+
+//作成後GoalListにインポート
+```
+
+- GoalItemを作り込む
+```js
+import React, { Component } from 'react';
+
+
+class GoalItem extends Component {
+  render () {
+    console.log('goal item の中身', this.props.goal);
+    const { email, title } = this.props.goal;
+    return(
+      <div style={{margin: '5px'}}>
+        <strong>{title}</strong>
+        <span> submitted by <em>{email}</em></span>
+      </div>
+    )
+  }
+}
+
+export default GoalItem;
+//これでタイトルとemailが表示される
+```
+## GoalItemにボタンを設置
+- firebase
+```
+export const completeGoalRef = firebase.database().ref('completeGoals');
+
+```
+
+```js
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { completeGoalRef } from '../firebase';
+
+class GoalItem extends Component {
+  completeGoal() {
+    // add to coplete goal
+
+    const { email } = this.props.user;
+    const { title } = this.props.goal;
+    console.log('email',email,'title', title);
+    //firebaseにプッシュすることで登録される
+    completeGoalRef.push({email, title});
+  }
+  render () {
+    console.log('goal item の中身', this.props.goal);
+    const { email, title } = this.props.goal;
+    return(
+      <div style={{margin: '5px'}}>
+        <strong>{title}</strong>
+        <span style={{margin: '5px'}}> submitted by <em>{email}</em></span>
+        <button className="btn btn-sm btn-primary"
+          onClick={() => this.completeGoal()}>
+          complate
+        </button>
+      </div>
+    )
+  }
+}
+
+function mapStateToProps(state) {
+  const { user } = state;
+  return {
+    user
+  }
+}
+
+export default connect(mapStateToProps,null)(GoalItem);
+
+
+```
