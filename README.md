@@ -963,3 +963,228 @@ export default connect(mapStateToProps,null)(GoalItem);
 
 
 ```
+
+
+## 削除ボタン機能
+```js
+//GoalList.jsx
+componentDidMount(){
+  goalRef.on('value', snap => {
+    let goals = [];
+    snap.forEach(goal => {
+      const { email, title } = goal.val();
+      //serverKeyを取得
+      const serverKey = goal.key;
+      goals.push({email, title, serverKey});
+      console.log('goal', goal);
+    })
+    console.log('goals', goals);
+    this.props.setGoals(goals);
+  })
+}
+
+
+//GoalItem.jsx
+import { completeGoalRef,goalRef } from '../firebase';
+
+
+//省略
+const { title, serverKey } = this.props.goal;
+console.log('serverKey', serverKey);
+goalRef.child(serverKey).remove();
+
+```
+- firebaseで確認するときちんと消えていることが確認できていればOK
+
+
+## Redux追加
+- src/components/CompleteGoalList.jsxを作成
+```js
+//baseコンポーネントを作成
+import React, { Component } from 'react';
+
+
+class CompleteGoalList extends Component {
+  render(){
+    return(
+      <div>CompleteGoalList</div>
+    )
+  }
+}
+export default CompleteGoalList;
+
+//App.jsでインポート
+import CompleteGoalList from './CompleteGoalList';
+
+//省略
+render() {
+  return (
+    <div style={{margin: '5px'}}>
+      <h3>Goals</h3>
+      <AddGoal />
+      <hr/>
+      <h4>Goals</h4>
+      <GoalList />
+      <hr/>
+      <h4>Complete Goals</h4>
+      <CompleteGoalList />
+    <button
+      className="btn btn-danger"
+      onClick={() => this.signOut()}
+      >
+//読み込めていたらOk
+```
+
+- CompleteGoalListの作り込み
+```js
+import React, { Component } from 'react';
+import { completeGoalRef } from '../firebase';
+
+
+class CompleteGoalList extends Component {
+  componentDidMount() {
+    completeGoalRef.on('value', snap =>{
+      let completeGoals = [];
+      snap.forEach(completeGoal => {
+        const { email, title } = completeGoal.val();
+        completeGoals.push({email, title})
+      })
+      console.log('completeGoals', completeGoals);
+    })
+  }
+  render(){
+    return(
+      <div>CompleteGoalList</div>
+    )
+  }
+}
+export default CompleteGoalList;
+
+
+```
+
+- constants.jsを追記
+```js
+export const SET_COMPLETED = 'SET_COMPLETED';
+```
+- actions/index.jsに追記
+```js
+//SET_COMPLETED　をインポート
+import { SIGNED_IN, SET_GOALS, SET_COMPLETED} from '../constants';
+
+
+export function setcompleted(completeGoals){
+  const action = {
+    type: SET_COMPLETED,
+    completeGoals
+  }
+  return action;
+}
+```
+- reducers/reducer_completed_goals.js
+```js
+import { SET_COMPLETED } from '../constants';
+
+
+export default(state = [], action) => {
+  switch (action.type) {
+    case SET_COMPLETED:
+      const { completeGoals } = action;
+      return completeGoals;
+    default:
+      return state;
+  }
+}
+```
+
+- reducers/index.jsにインポート
+```js
+import { combineReducers } from 'redux';
+import user from './reducer_user';
+import goals from './reducer_goals';
+//import
+import completeGoals from './reducer_completed_goals';
+
+export default combineReducers({
+  user,
+  goals,
+  //import
+  completeGoals
+})
+
+
+```
+
+## レンダリングcopmleteGoals
+- CompleteGoalListを修正
+```js
+import React, { Component } from 'react';
+import { completeGoalRef } from '../firebase';
+import { connect } from 'react-redux';
+import { setCompleted } from '../actions'
+
+class CompleteGoalList extends Component {
+  componentDidMount() {
+    completeGoalRef.on('value', snap =>{
+      let completeGoals = [];
+      snap.forEach(completeGoal => {
+        const { email, title } = completeGoal.val();
+        completeGoals.push({email, title})
+      })
+      console.log('completeGoals', completeGoals);
+      this.props.setCompleted(completeGoals);
+    })
+  }
+  //削除機能
+  clearCompleted(){
+    completeGoalRef.set([]);
+  }
+
+  render(){
+    console.log('this.props.completeGoals' ,this.props.completeGoals);
+    return(
+      <div>
+        {
+          this.props.completeGoals.map((completeGoal, index) =>{
+            const { title, email } = completeGoal;
+            return (
+              <div key={index}>
+                <strong>{title}</strong>
+                completed by
+                <em>{email}</em>
+              </div>
+            )
+          })
+        }
+        //全部削除のボタン
+        <button className="btn btn-primary"
+          onClick={ () => this.clearCompleted() }
+          >
+          clear All</button>
+      </div>
+    )
+  }
+}
+
+function mapStateToProps(state) {
+  const { completeGoals } = state;
+  return {
+    completeGoals
+  }
+}
+export default connect(mapStateToProps, { setCompleted })(CompleteGoalList);
+
+```
+
+# まとめ
+- 認証：電子メール、パスワード、displayNameなどの情報を使って、ユーザーがサインアップしてアプリケーションにサインインできるようにします。
+
+- React Router - Reactアプリケーションでのルーティングを可能にするJavaScriptライブラリ。React Routerを使用すると、アプリケーションは特定のコンポーネントにURLを送信することを許可できます。
+
+- Firebase - アプリケーションがリアルタイムのデータベースと完全な認証を持つことを可能にするGoogleによって提供されるサービス。
+
+Firebaseの リファレンス - firebaseデータベースの場所にマップして、複数の方法でデータを操作できます。
+
+- browserHistory - Reactアプリケーションは、訪問したURLを保存することにより、アプリケーション全体のユーザーナビゲーションを追跡することができます。また、アプリケーションがユーザーを特定のコンポーネントにリダイレクトするのを処理できるようにします。
+
+- combineReducers - アプリケーションが複数のレデューサーを結合し、それらを1つのレデューサーとしてエクスポートできるようにするreduxメソッド。
