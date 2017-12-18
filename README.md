@@ -1183,7 +1183,7 @@ export default connect(mapStateToProps, { setCompleted })(CompleteGoalList);
 
 - Firebase - アプリケーションがリアルタイムのデータベースと完全な認証を持つことを可能にするGoogleによって提供されるサービス。
 
-Firebaseの リファレンス - firebaseデータベースの場所にマップして、複数の方法でデータを操作できます。
+- Firebaseの リファレンス - firebaseデータベースの場所にマップして、複数の方法でデータを操作できます。
 
 - browserHistory - Reactアプリケーションは、訪問したURLを保存することにより、アプリケーション全体のユーザーナビゲーションを追跡することができます。また、アプリケーションがユーザーを特定のコンポーネントにリダイレクトするのを処理できるようにします。
 
